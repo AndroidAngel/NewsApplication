@@ -10,6 +10,10 @@ public class News extends Object implements Serializable {
     public String section;
     public String author;
 
+    public News(String section){
+        this.section = section;
+    }
+
     public News(String title,String author, String url, String section, String date ){
         this.title = title;
         this.author = author;

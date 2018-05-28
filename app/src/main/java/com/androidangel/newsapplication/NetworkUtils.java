@@ -1,5 +1,7 @@
 package com.androidangel.newsapplication;
 
+import android.accounts.NetworkErrorException;
+import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
@@ -23,6 +25,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class NetworkUtils {
+    private static Activity activity;
+
+
+    public NetworkUtils(Activity activity) {
+        this.activity = activity;
+    }
 
     static String createStringUrl(){
         Uri.Builder builder = new Uri.Builder();
@@ -77,10 +85,10 @@ public class NetworkUtils {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readStream(inputStream);
             }else {
-               Log.e("MainActivity", "Error response code: ----------" + urlConnection.getResponseCode());
+               Log.e("MainActivity", "Error response code: ----" + urlConnection.getResponseCode());
             }
         }catch (IOException e){
-            Log.e("NetworkUtils", "ERROR in Http request:------------------------ ", e);
+            Log.e("NetworkUtils", "ERROR in Http request:--- ", e);
         }finally {
             if (urlConnection != null){
                 urlConnection.disconnect();
@@ -93,6 +101,8 @@ public class NetworkUtils {
     }
 
     private static String readStream(InputStream inputStream)throws IOException {
+
+
        StringBuilder outputs = new StringBuilder();
        if (inputStream != null){
            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
@@ -106,7 +116,14 @@ public class NetworkUtils {
        return outputs.toString();
     }
 
-    static List<News> jsonParse(String response){
+     public static List<News> jsonParse(String response)throws JSONException,
+             NetworkErrorException{
+
+         if (CheckNetwork.isNetworkNotAvailable(activity))
+             throw new NetworkErrorException("No server response. Check network connection");
+
+
+
         ArrayList<News> listOfAllNews = new ArrayList<>();
         try {
             JSONObject jsonResponse = new JSONObject(response);
@@ -143,4 +160,4 @@ public class NetworkUtils {
     }
 
 
-}
+    }

@@ -18,6 +18,16 @@
     <string name="angel_m">Angel M.</string>
     <string name="headline_news_tile">Headline News tile</string>
     <string name="june_26_2010">June 26, 2010</string>
+    <string name="no_connection_available">No connection available</string>
+    <string name="action_settings">Settings</string>
+    <string name="this_is_the_settings_activity">THIS IS THE SETTINGS ACTIVITY</string>
+    <string name="refresh">Refresh</string>
+    <string name="problem">problem</string>
+
+
+
+    <string name="error_no_network">No network connectivity! Will load when the network is available.</string>
+    <string name="toast_no_connectivity">No Connectivity</string>
 
 
 </resources>

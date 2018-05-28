@@ -8,8 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewsAdapter extends ArrayAdapter<News> {
+
+    private List<News> mData;
 
 
     public NewsAdapter(Context context) {
@@ -33,8 +36,10 @@ public class NewsAdapter extends ArrayAdapter<News> {
         date.setText(currentNews.getDate());
 
         return convertView;
-
-
+    }
+    public void setData(List<News> data) {
+        mData = data;
+        notifyDataSetChanged();
     }
 }
 

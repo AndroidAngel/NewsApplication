@@ -37,6 +37,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         return convertView;
     }
+
     public void setData(List<News> data) {
         mData = data;
         notifyDataSetChanged();

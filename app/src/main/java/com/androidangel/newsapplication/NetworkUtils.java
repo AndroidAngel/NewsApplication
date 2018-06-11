@@ -1,7 +1,5 @@
 package com.androidangel.newsapplication;
 
-import android.accounts.NetworkErrorException;
-import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
@@ -25,14 +23,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class NetworkUtils {
-    private static Activity activity;
 
+    public NetworkUtils() {
 
-    public NetworkUtils(Activity activity) {
-        this.activity = activity;
     }
 
-    static String createStringUrl(){
+    static String createStringUrl() {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .encodedAuthority("content.guardianapis.com")
@@ -41,11 +37,13 @@ public class NetworkUtils {
                 .appendQueryParameter("show-references", "author")
                 .appendQueryParameter("show-tags", "contributor")
                 .appendQueryParameter("q", "q")
-                .appendQueryParameter("api-key", "key");
+                .appendQueryParameter("api-key", "test");
+
         String url = builder.build().toString();
         return url;
     }
-    static URL createUrl(){
+
+    static URL createUrl() {
         String stringUrl = createStringUrl();
         try {
             return new URL(stringUrl);
@@ -55,74 +53,70 @@ public class NetworkUtils {
             return null;
         }
     }
+
     private static String dateFormat(String dateData) {
         String jsonDate = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         SimpleDateFormat jsonFormat = new SimpleDateFormat(jsonDate, Locale.US);
         try {
             Date parsedJsonDate = jsonFormat.parse(dateData);
             String parsedDateFormat = "MMM d, yyy";
-            SimpleDateFormat parsedDate = new SimpleDateFormat(parsedDateFormat,Locale.US);
+            SimpleDateFormat parsedDate = new SimpleDateFormat(parsedDateFormat, Locale.US);
             return parsedDate.format(parsedJsonDate);
-        }catch (ParseException e){
+        } catch (ParseException e) {
             Log.e("NetworkUtils", "ERROR parsing date", e);
             return "";
         }
     }
-    static String makeHttpRequest(URL url)throws IOException{
+
+    static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
-        if (url == null){
+        if (url == null) {
             return jsonResponse;
         }
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
         try {
-            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(10000);
             urlConnection.setConnectTimeout(15000);
             urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200){
+            if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readStream(inputStream);
-            }else {
-               Log.e("MainActivity", "Error response code: ----" + urlConnection.getResponseCode());
+            } else {
+                Log.e("MainActivity", "Error response code: ----" + urlConnection.getResponseCode());
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             Log.e("NetworkUtils", "ERROR in Http request:--- ", e);
-        }finally {
-            if (urlConnection != null){
+        } finally {
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            if (inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
             }
         }
         return jsonResponse;
     }
 
-    private static String readStream(InputStream inputStream)throws IOException {
+    private static String readStream(InputStream inputStream) throws IOException {
 
 
-       StringBuilder outputs = new StringBuilder();
-       if (inputStream != null){
-           InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-           BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-           String readerLine = bufferedReader.readLine();
-           while (readerLine != null){
-               outputs.append(readerLine);
-               readerLine = bufferedReader.readLine();
-           }
-       }
-       return outputs.toString();
+        StringBuilder outputs = new StringBuilder();
+        if (inputStream != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String readerLine = bufferedReader.readLine();
+            while (readerLine != null) {
+                outputs.append(readerLine);
+                readerLine = bufferedReader.readLine();
+            }
+        }
+        return outputs.toString();
     }
 
-     public static List<News> jsonParse(String response)throws JSONException,
-             NetworkErrorException{
-
-         if (CheckNetwork.isNetworkNotAvailable(activity))
-             throw new NetworkErrorException("No server response. Check network connection");
-
-
+    public static List<News> jsonParse(String response) {
 
         ArrayList<News> listOfAllNews = new ArrayList<>();
         try {
@@ -130,7 +124,7 @@ public class NetworkUtils {
             JSONObject jsonResults = jsonResponse.getJSONObject("response");
             JSONArray arrayResults = jsonResults.getJSONArray("results");
 
-            for (int i = 0; i < arrayResults.length(); i++){
+            for (int i = 0; i < arrayResults.length(); i++) {
                 JSONObject aResult = arrayResults.getJSONObject(i);
                 String webTitle = aResult.getString("webTitle");
                 String url = aResult.getString("webUrl");
@@ -139,10 +133,10 @@ public class NetworkUtils {
                 date = dateFormat(date);
                 JSONArray arrayTags = aResult.getJSONArray("tags");
                 String author = "";
-                if (arrayTags.length() == 0 ){
+                if (arrayTags.length() == 0) {
                     author = null;
-                }else {
-                    for (int b = 0; b < arrayTags.length(); b++){
+                } else {
+                    for (int b = 0; b < arrayTags.length(); b++) {
                         JSONObject firstObject = arrayTags.getJSONObject(b);
                         author += firstObject.getString("webTitle") + ". ";
 
@@ -152,7 +146,7 @@ public class NetworkUtils {
 
             }
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
             Log.e("NetworkUtils", "Error parsing json: ------------------", e);
         }
         return listOfAllNews;
@@ -160,4 +154,4 @@ public class NetworkUtils {
     }
 
 
-    }
+}

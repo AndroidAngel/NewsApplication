@@ -10,11 +10,11 @@ public class News extends Object implements Serializable {
     public String section;
     public String author;
 
-    public News(String section){
+    public News(String section) {
         this.section = section;
     }
 
-    public News(String title,String author, String url, String section, String date ){
+    public News(String title, String author, String url, String section, String date) {
         this.title = title;
         this.author = author;
         this.url = url;
@@ -46,6 +46,7 @@ public class News extends Object implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
+
     public void setUrl(String url) {
         this.url = url;
     }
@@ -61,13 +62,14 @@ public class News extends Object implements Serializable {
     public void setAuthor(String author) {
         this.author = author;
     }
+
     @Override
-    public String toString(){
-        return "News{"+
+    public String toString() {
+        return "News{" +
                 "title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", url='" + url + '\'' +
-                ", section='" + section+ '\'' +
+                ", section='" + section + '\'' +
                 ", date='" + date + '\'' +
                 '}';
 

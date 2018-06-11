@@ -9,8 +9,6 @@
         <xliff:g id="month">%1$s</xliff:g>, <xliff:g id="day">%2$s</xliff:g>
     </string>
 
-
-
     <string name="error_message">No internet connection!\nTry Again\nAfter Check internet connection\nthen Reopen the app.</string>
     <string name="sports">Sports</string>
     <string name="angel_m">Angel M.</string>

@@ -8,5 +8,4 @@
         android:entryValues="@array/settings_section_values"
         android:key="@string/settings_section_news_key"
         android:title="@string/settings_section_label" />
-
 </PreferenceScreen>

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         Uri baseUri = Uri.parse(REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("api-key", "9271ca86-4372-430a-9c6f-b9bb1b837446");
+        uriBuilder.appendQueryParameter("api-key", "key");
         uriBuilder.appendQueryParameter("show-tags", "contributor");
         uriBuilder.appendQueryParameter("page-size", minNews);
         uriBuilder.appendQueryParameter("q", "q");

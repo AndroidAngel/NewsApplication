@@ -14,21 +14,24 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
     }
 
-    public static class NewsPreferenceFragment extends PreferenceFragment implements
-            Preference.OnPreferenceChangeListener {
+    public static class NewsPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
 
+            Preference minNews = findPreference(getString(R.string.settings_min_news_key));
+            bindPreferenceSummaryToValue(minNews);
+
+            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
+            bindPreferenceSummaryToValue(orderBy);
+
             Preference section = findPreference(getString(R.string.settings_section_news_key));
             bindPreferenceSummaryToValue(section);
         }
-
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -43,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 preference.setSummary(stringValue);
             }
-            return false;
+            return true;
         }
 
         private void bindPreferenceSummaryToValue(Preference preference) {
@@ -53,6 +56,5 @@ public class SettingsActivity extends AppCompatActivity {
             String preferenceString = preferences.getString(preference.getKey(), "");
             onPreferenceChange(preference, preferenceString);
         }
-
     }
 }

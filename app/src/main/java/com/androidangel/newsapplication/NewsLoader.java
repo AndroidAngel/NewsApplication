@@ -1,41 +1,30 @@
 package com.androidangel.newsapplication;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
-
-import java.io.IOException;
-import java.net.URL;
+import android.content.AsyncTaskLoader;
 import java.util.List;
 
 public class NewsLoader extends AsyncTaskLoader<List<News>> {
 
+    String mURL ;
 
-    public NewsLoader(Context context) {
+    public NewsLoader(Context context, String url) {
         super(context);
-
-
+        this.mURL = url;
     }
 
     @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
+    protected void onStartLoading()  {
         forceLoad();
-
     }
 
     @Override
     public List<News> loadInBackground() {
-
-        List<News> listOfAllNews = null;
-        try {
-            URL url = NetworkUtils.createUrl();
-            String jsonResponse = NetworkUtils.makeHttpRequest(url);
-            listOfAllNews = NetworkUtils.jsonParse(jsonResponse);
-
-        } catch (IOException e) {
-            Log.e("NetworkUtils", "Error Loader LoaderBackground:---------------------", e);
+        if (mURL == null) {
+            return null;
         }
-        return listOfAllNews;
+
+        List<News> newsList = NetworkUtils.fetchNewsData(mURL);
+        return newsList;
     }
 }

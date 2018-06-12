@@ -12,35 +12,40 @@ import java.util.List;
 
 public class NewsAdapter extends ArrayAdapter<News> {
 
-    private List<News> mData;
-
-
-    public NewsAdapter(Context context) {
-        super(context, -1, new ArrayList<News>());
+    public NewsAdapter(Context context, ArrayList<News> news) {
+        super(context, 0, news);
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_main_list_item, parent, false);
+        View listItemView = convertView;
+        if (listItemView == null) {
+            listItemView = LayoutInflater.from(getContext()).inflate(
+                    R.layout.activity_main_list_item, parent, false);
         }
-        TextView title = convertView.findViewById(R.id.tv_news_title);
-        TextView author = convertView.findViewById(R.id.tv_news_author);
-        TextView section = convertView.findViewById(R.id.tv_news_section);
-        TextView date = convertView.findViewById(R.id.tv_news_date);
 
         News currentNews = getItem(position);
-        title.setText(currentNews.getTitle());
-        author.setText(currentNews.getAuthor());
-        section.setText(currentNews.getSection());
-        date.setText(currentNews.getDate());
+        TextView newsTitleTextView = listItemView.findViewById(R.id.tv_news_title);
+        String title = currentNews.getmTitle();
+        newsTitleTextView.setText(title);
 
-        return convertView;
-    }
+        TextView newsCategoryTV = listItemView.findViewById(R.id.tv_news_section);
+        String category = currentNews.getmCategory();
+        newsCategoryTV.setText(category);
 
-    public void setData(List<News> data) {
-        mData = data;
-        notifyDataSetChanged();
+        TextView newsDateTV =  listItemView.findViewById(R.id.tv_news_date);
+        String date = currentNews.getmDate();
+        newsDateTV.setText(date);
+
+        TextView newsAuthorTV = listItemView.findViewById(R.id.tv_news_author);
+        String author = currentNews.getmAuthor();
+
+        if(author.equals("")){
+            author = getContext().getString(R.string.no_author);
+        }
+
+        newsAuthorTV.setText(author);
+
+        return listItemView;
     }
 }
 

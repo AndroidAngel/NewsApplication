@@ -9,8 +9,9 @@
         <xliff:g id="month">%1$s</xliff:g>, <xliff:g id="day">%2$s</xliff:g>
     </string>
 
-    <string name="error_message">No internet connection!\nTry Again\nAfter Check internet connection\nthen Reopen the app.</string>
+    <string name="error_message">No internet connection!\Check internet connection\nthen Reopen the app.</string>
     <string name="sports">Sports</string>
+    <string name="no_author">No Author ..</string>
     <string name="angel_m">Angel M.</string>
     <string name="headline_news_tile">Headline News tile</string>
     <string name="june_26_2010">June 26, 2010</string>
@@ -30,6 +31,8 @@
     <string name="settings_section_label">Section</string>
     <string name="settings_title">News Settings</string>
     <string name="settings_menu">Settings</string>
+
+
 
     <string-array name="settings_section_labels">
         <item>@string/settings_section_all_news_label</item>
@@ -73,6 +76,36 @@
     <string name="settings_section_Film_value" translatable="false">film</string>
 
 
+
+    <string-array name="settings_order_by_labels">
+        <item>@string/settings_order_by_newest_news_label</item>
+        <item>@string/settings_order_by_oldest_news_label</item>
+        <item>@string/settings_order_by_relevance_news_label</item>
+    </string-array>
+
+
+    <string-array name="settings_order_by_values">
+        <item>@string/settings_order_by_newest_news_value</item>
+        <item>@string/settings_order_by_oldest_news_value</item>
+        <item>@string/settings_order_by_relevance_news_value</item>
+    </string-array>
+
+    <string name="settings_order_by_newest_news_label">Newest</string>
+    <string name="settings_order_by_newest_news_value" translatable="false">newest</string>
+
+    <string name="settings_order_by_oldest_news_label">Oldest</string>
+    <string name="settings_order_by_oldest_news_value" translatable="false">oldest</string>
+
+    <string name="settings_order_by_relevance_news_label">Relevance</string>
+    <string name="settings_order_by_relevance_news_value" translatable="false">relevance</string>
+
+    <string name="settings_min_news_label">Minimum News</string>
+    <string name="settings_min_news_key" translatable="false">min_news</string>
+    <string name="settings_min_news_default" translatable="false">10</string>
+
+    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_newest_news_value</string>
 
 
 </resources>

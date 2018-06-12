@@ -7,92 +7,101 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+
 import android.widget.TextView;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<List<News>> {
-
-    private static final String LOG_TAG = MainActivity.class.getName();
-
-    private static final int NEWS_LOADER_ID = 0;
-
-    private NewsAdapter adapter;
-    ListView mListView;
-
-    private TextView mErrorMessageDisplay;
-    private ProgressBar mLoadingIndicator;
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<News>> {
+    private NewsAdapter mAdapter;
+    private TextView mEmptyView;
+    private static String REQUEST_URL = "http://content.guardianapis.com/search?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
-        mListView = findViewById(R.id.mainList);
-        mListView.setEmptyView(mErrorMessageDisplay);
-        adapter = new NewsAdapter(this);
-        mListView.setAdapter(adapter);
+        ListView newsListView = findViewById(R.id.mainList);
+        mEmptyView = findViewById(R.id.tv_error_message_display);
+        newsListView.setEmptyView(mEmptyView);
+        mAdapter = new NewsAdapter(this, new ArrayList<News>());
 
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        newsListView.setAdapter(mAdapter);
+        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-
-                News news = adapter.getItem(position);
-                String url = news.url;
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                News currentNews = mAdapter.getItem(position);
+                Uri newsUri = Uri.parse(currentNews.getmUrl());
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
+                startActivity(websiteIntent);
             }
         });
-        getSupportLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
-
-    }
-
-    @Override
-    public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        return new NewsLoader(this);
-
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<News>> loader, List<News> data) {
-
-        View loadingIndicator = findViewById(R.id.pb_loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
-        mErrorMessageDisplay.setText(R.string.error_message);
-        adapter.addAll(data);
-        if (data != null && !data.isEmpty()) {
-            adapter.addAll(data);
+        if (networkInfo != null && networkInfo.isConnected()) {
+            android.app.LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(0, null, this);
+        } else {
+            View loadingIndicator = findViewById(R.id.pb_loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+            mEmptyView.setText(R.string.error_message);
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<List<News>> loader) {
-        adapter.clear();
+    public Loader<List<News>> onCreateLoader(int id, Bundle args) {
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String minNews = sharedPreferences.getString(getString(R.string.settings_min_news_key), getString(R.string.settings_min_news_default));
+        String orderBy = sharedPreferences.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_order_by_default));
+        String section = sharedPreferences.getString(getString(R.string.settings_section_news_key), getString(R.string.settings_section_news_default));
+
+        Uri baseUri = Uri.parse(REQUEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        uriBuilder.appendQueryParameter("api-key", "9271ca86-4372-430a-9c6f-b9bb1b837446");
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("page-size", minNews);
+        uriBuilder.appendQueryParameter("q", "q");
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+
+        if (!section.equals(getString(R.string.settings_section_news_default))) {
+            uriBuilder.appendQueryParameter("section", section);
+        }
+
+        return new NewsLoader(this, uriBuilder.toString());
+    }
+
+    @Override
+    public void onLoadFinished(android.content.Loader<List<News>> loader, List<News> news) {
+        View loadingIndicator = findViewById(R.id.pb_loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+        mEmptyView.setText( R.string.error_message);
+        mAdapter.clear();
+
+        if (news != null && !news.isEmpty()) {
+            mAdapter.addAll(news);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(android.content.Loader<List<News>> loader) {
+        mAdapter.clear();
     }
 
     @Override
@@ -105,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
